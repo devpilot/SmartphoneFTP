@@ -1,6 +1,10 @@
 package vu.smartphoneftp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -49,5 +53,37 @@ public class DbHelper extends SQLiteOpenHelper {
 		// Create tables again
 		onCreate(db);
 	}
-	
+
+	// Adding new account
+	public void addServer() {
+		SQLiteDatabase db = this.getWritableDatabase(); // Open database
+		//TODO insert code
+		db.close(); // Closing database
+	}
+
+	// Get all accounts
+	public List<Server> getServers() {
+		SQLiteDatabase db = this.getReadableDatabase(); // Open database
+
+		List<Server> serverList = new ArrayList<Server>();
+		// Select All Query
+		String selectQuery = "SELECT "+ KEY_ID +","+ KEY_TITLE +" FROM " + TABLE_ACCOUNTS;
+
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			do {
+				Server serv = new Server();
+				 serv.set_id(Integer.parseInt(cursor.getString(0)));
+				 serv.setTitle(cursor.getString(1));
+				// Adding contact to list
+				serverList.add(serv);
+			} while (cursor.moveToNext());
+			cursor.close();
+		}
+		db.close();
+		// return server list
+		return serverList;
+	}
+
 }
