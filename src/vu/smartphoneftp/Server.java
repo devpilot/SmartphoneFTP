@@ -1,9 +1,51 @@
 package vu.smartphoneftp;
 
 public class Server {
+
 	private int _id, port;
 	private String title, host, username, password;
 	
+	// Empty constructor
+	public Server() {}
+	
+	/**
+	 * constructor
+	 *
+	 * @param title
+	 * @param host
+	 * @param port
+	 * @param username
+	 * @param password
+	 */
+	public Server(String title, String host, int port, String username,
+			String password) {
+		this.title = title;
+		this.host = host;
+		this.port = port;
+		this.username = username;
+		this.password = password;
+	}
+	
+	/**
+	 * constructor
+	 *
+	 * @param _id
+	 * @param title
+	 * @param host
+	 * @param port
+	 * @param username
+	 * @param password
+	 */
+	public Server(int _id, String title, String host, int port,
+			String username, String password) {
+		this._id = _id;
+		this.title = title;
+		this.host = host;
+		this.port = port;
+		this.username = username;
+		this.password = password;
+	}
+
 	public int get_id() {
 		return _id;
 	}
