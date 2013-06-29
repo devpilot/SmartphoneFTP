@@ -3,6 +3,7 @@ package vu.smartphoneftp;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -16,7 +17,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	// Database Name
 	private static final String DATABASE_NAME = "smartphoneFTP";
 
-	// Contacts table name
+	// servers table name
 	private static final String TABLE_ACCOUNTS = "accounts";
 
 	// Accounts Table Columns names
@@ -55,13 +56,21 @@ public class DbHelper extends SQLiteOpenHelper {
 	}
 
 	// Adding new account
-	public void addServer() {
+	public void addServer(Server server) {
 		SQLiteDatabase db = this.getWritableDatabase(); // Open database
-		//TODO insert code
+		ContentValues values = new ContentValues();
+		values.put(KEY_TITLE, server.getTitle()); // connection Name
+		values.put(KEY_HOST, server.getHost()); // server hostname
+		values.put(KEY_PORT, server.getPort()); // server port
+		values.put(KEY_USER, server.getUsername()); // server username
+		values.put(KEY_PASS, server.getPassword()); // server password
+		
+		// Inserting Row
+		db.insert(TABLE_ACCOUNTS, null, values);
 		db.close(); // Closing database
 	}
 
-	// Get all accounts
+	// Get all accounts id and name
 	public List<Server> getServers() {
 		SQLiteDatabase db = this.getReadableDatabase(); // Open database
 
@@ -76,7 +85,7 @@ public class DbHelper extends SQLiteOpenHelper {
 				Server serv = new Server();
 				 serv.set_id(Integer.parseInt(cursor.getString(0)));
 				 serv.setTitle(cursor.getString(1));
-				// Adding contact to list
+				// Adding server to list
 				serverList.add(serv);
 			} while (cursor.moveToNext());
 			cursor.close();
@@ -85,5 +94,4 @@ public class DbHelper extends SQLiteOpenHelper {
 		// return server list
 		return serverList;
 	}
-
 }
