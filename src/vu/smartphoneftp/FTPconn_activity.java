@@ -3,6 +3,8 @@ package vu.smartphoneftp;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -75,7 +77,29 @@ public class FTPconn_activity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				
+				final EditText input = new EditText(FTPconn_activity.this);
+				new AlertDialog.Builder(FTPconn_activity.this)
+				.setTitle("Connection name")
+				.setView(input)
+				.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO call function to save details in database
+						if(input.getText().toString() != ""){
+							
+						}
+					}
+				})
+				.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// Canceled
+						
+					}
+				})
+				.show();
 			}
 		});
 		
