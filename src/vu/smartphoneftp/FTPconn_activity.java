@@ -3,38 +3,52 @@ package vu.smartphoneftp;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 public class FTPconn_activity extends Activity {
+
+	private EditText title, host, port, username, password;
+	private Spinner s;
+	private final DbHelper db = new DbHelper(this);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_ftpconn);
 
-		DbHelper db = new DbHelper(this);
+		// view component reference
+		s = (Spinner) findViewById(R.id.selectCon);
+		title = (EditText) findViewById(R.id.txtConHost);
+//		host = (EditText) findViewById(R.id.txtConHost);
+		port = (EditText) findViewById(R.id.txtConPort);
+		username = (EditText) findViewById(R.id.txtConUser);
+		password = (EditText) findViewById(R.id.txtConPass);
+		Button btnConnect = (Button) findViewById(R.id.btnConnect);
+		Button btnSave = (Button) findViewById(R.id.btnSave);
+		Button btnEdit = (Button) findViewById(R.id.btnEdit);
+		Button btnDelete = (Button) findViewById(R.id.btnDelete);
+		View accDetails = (LinearLayout) findViewById(R.id.accDetails);
 		
-		// Get server list from DB
-		List<Server> servList = db.getServers();
-		
-		// Initialize adapter
-		ArrayAdapter<Server> adapter = new ArrayAdapter<Server>(this,
-				android.R.layout.simple_spinner_item, servList);
-		// Spinner reference
-		Spinner s = (Spinner) findViewById(R.id.selectCon);
-		// Assign adapter
-		s.setAdapter(adapter);
+		// load account list in spinner
+		updateServerList();
+
 		// Spinner item select listener
 		s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int pos, long id) {
+				// return selected server id
 				int itemId = ((Server) parent.getItemAtPosition(pos)).get_id();
 			}
 
@@ -45,6 +59,68 @@ public class FTPconn_activity extends Activity {
 			}
 
 		});
+		
+		// Connect button click
+		btnConnect.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		// Save button click
+		btnSave.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+			}
+		});
+		
+		// Edit button Click
+		btnEdit.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent i = new Intent(
+						"vu.smartphoneftp.ConnectionEdit_Activity");
+				startActivityForResult(i, 1);
+
+			}
+		});
+		
+		// Delete button click
+		btnDelete.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+	
+	private void updateServerList() {
+		// Get server list from DB
+		List<Server> servList = db.getServers();
+		// Initialize adapter
+		ArrayAdapter<Server> adapter = new ArrayAdapter<Server>(this,
+				android.R.layout.simple_spinner_item, servList);
+		// Assign adapter
+		s.setAdapter(adapter);
+	}
+
+	private void validateFields() {
+		
 	}
 
 	@Override
