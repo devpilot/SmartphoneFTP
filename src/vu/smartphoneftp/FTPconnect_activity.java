@@ -17,7 +17,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
-public class FTPconn_activity extends Activity {
+public class FTPconnect_activity extends Activity {
 
 	private EditText title, host, port, username, password;
 	private Spinner s;
@@ -26,7 +26,7 @@ public class FTPconn_activity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_ftpconn);
+		setContentView(R.layout.activity_ftpconnect);
 
 		// view component reference
 		s = (Spinner) findViewById(R.id.selectCon);
@@ -77,8 +77,8 @@ public class FTPconn_activity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				final EditText input = new EditText(FTPconn_activity.this);
-				new AlertDialog.Builder(FTPconn_activity.this)
+				final EditText input = new EditText(FTPconnect_activity.this);
+				new AlertDialog.Builder(FTPconnect_activity.this)
 				.setTitle("Connection name")
 				.setView(input)
 				.setPositiveButton("Save", new DialogInterface.OnClickListener() {

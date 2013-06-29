@@ -14,7 +14,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="vu.smartphoneftp.FTPconn_activity"
+            android:name="vu.smartphoneftp.FTPconnect_activity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,7 +25,7 @@
         <activity
             android:name="vu.smartphoneftp.ConnectionEdit_Activity"
             android:label="@string/app_name"
-            android:parentActivityName="vu.smartphoneftp.FTPconn_activity" >
+            android:parentActivityName="vu.smartphoneftp.FTPconnect_activity" >
             <intent-filter>
                 <action android:name="vu.smartphoneftp.ConnectionEdit_Activity" />
                 <category android:name="android.intent.category.DEFAULT" />
