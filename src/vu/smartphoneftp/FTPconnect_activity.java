@@ -23,7 +23,8 @@ public class FTPconnect_activity extends Activity {
 	private EditText title, host, port, username, password;
 	private Spinner s;
 	private final DbHelper db = new DbHelper(this);
-
+	private int selectedConnectionId;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -52,9 +53,9 @@ public class FTPconnect_activity extends Activity {
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int pos, long id) {
 				// return selected server id
-				int itemId = ((Server) parent.getItemAtPosition(pos)).get_id();
+				selectedConnectionId = ((Server) parent.getItemAtPosition(pos)).get_id();
 				// toggle components according to item selected
-				if (itemId == 0) {
+				if (selectedConnectionId == 0) {
 					// while quick connect is selected
 					accDetails.setVisibility(View.VISIBLE);
 					btnDelete.setEnabled(false);
@@ -147,7 +148,10 @@ public class FTPconnect_activity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-
+				Server s = new Server();
+				s.set_id(selectedConnectionId);
+				db.deleteServer(s);
+				updateServerList();
 			}
 		});
 	}

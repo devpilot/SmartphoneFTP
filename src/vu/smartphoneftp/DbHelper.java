@@ -94,4 +94,12 @@ public class DbHelper extends SQLiteOpenHelper {
 		// return server list
 		return serverList;
 	}
+	
+	// Deleting single connection
+	public void deleteServer(Server server) {
+	SQLiteDatabase db = this.getWritableDatabase();
+	db.delete(TABLE_ACCOUNTS, KEY_ID + " = ?",
+	new String[]{String.valueOf(server.get_id())});
+	db.close();
+	}
 }
