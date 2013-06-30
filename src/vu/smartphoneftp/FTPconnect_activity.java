@@ -190,15 +190,22 @@ public class FTPconnect_activity extends Activity {
 	}
 
 	private void validateFields(String title, String host, String port, String username, String password) {
-		// Setting default value for blank fields
-		int port1 = (Integer) (!port.equals("") ? Integer.parseInt(port) : 21);
-		username = !username.equals("") ? username : "anonymous";
-		password = !password.equals("") ? password : "user@host";
-		// Insert into database
-		db.addServer(new Server(title, host, port1, username, password));
-		// update new info to spinner
-		updateServerList();
-		Toast.makeText(this, "Connection saved", Toast.LENGTH_SHORT).show();
+		// check if connection name exist
+		Server s = new Server();
+		s.setTitle(title);
+		if(db.isExist(s)){
+			showAlert("Connection name exist choose another name");
+		} else {
+			// Setting default value for blank fields
+			int port1 = (Integer) (!port.equals("") ? Integer.parseInt(port) : 21);
+			username = !username.equals("") ? username : "anonymous";
+			password = !password.equals("") ? password : "user@host";
+			// Insert into database
+			db.addServer(new Server(title, host, port1, username, password));
+			// update new info to spinner
+			updateServerList();
+			Toast.makeText(this, "Connection saved", Toast.LENGTH_SHORT).show();
+		}
 	}
 	
 	// show warning dialog

@@ -102,4 +102,19 @@ public class DbHelper extends SQLiteOpenHelper {
 	new String[]{String.valueOf(server.get_id())});
 	db.close();
 	}
+	
+	/**
+	 * connection exist
+	 * @param server
+	 * @return boolean
+	 * return true if exist otherwise return false
+	 */
+	public boolean isExist(Server server){
+		SQLiteDatabase db = this.getReadableDatabase();
+		String query = "SELECT "+ KEY_ID +" FROM "+ TABLE_ACCOUNTS +" WHERE "+ KEY_TITLE +" = '"+ server.getTitle()+"'";
+		Cursor c = db.rawQuery(query,null);
+		if(c != null && c.getCount() > 0)
+			return true;
+		return false;
+	}
 }
