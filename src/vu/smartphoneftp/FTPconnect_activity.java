@@ -36,9 +36,9 @@ public class FTPconnect_activity extends Activity {
 		username = (EditText) findViewById(R.id.txtConUser);
 		password = (EditText) findViewById(R.id.txtConPass);
 		Button btnConnect = (Button) findViewById(R.id.btnConnect);
-		Button btnSave = (Button) findViewById(R.id.btnSave);
-		Button btnEdit = (Button) findViewById(R.id.btnEdit);
-		Button btnDelete = (Button) findViewById(R.id.btnDelete);
+		final Button btnSave = (Button) findViewById(R.id.btnSave);
+		final Button btnEdit = (Button) findViewById(R.id.btnEdit);
+		final Button btnDelete = (Button) findViewById(R.id.btnDelete);
 		final View accDetails = (LinearLayout) findViewById(R.id.accDetails);
 		
 		// load account list in spinner
@@ -54,9 +54,17 @@ public class FTPconnect_activity extends Activity {
 				int itemId = ((Server) parent.getItemAtPosition(pos)).get_id();				
 				// toggle components according to item selected
 				if (itemId == 0) {
+					// while quick connect is selected
 					accDetails.setVisibility(View.VISIBLE);
+					btnDelete.setEnabled(false);
+					btnEdit.setEnabled(false);
+					btnSave.setEnabled(true);
 				} else {
+					// while saved connection is selected
 					accDetails.setVisibility(View.GONE);
+					btnDelete.setEnabled(true);
+					btnEdit.setEnabled(true);
+					btnSave.setEnabled(false);
 				}
 			}
 
@@ -97,6 +105,8 @@ public class FTPconnect_activity extends Activity {
 										// database
 										if (input.getText().toString() != "") {
 
+										} else {
+											
 										}
 									}
 								})
