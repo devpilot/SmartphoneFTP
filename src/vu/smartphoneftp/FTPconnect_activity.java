@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 public class FTPconnect_activity extends Activity {
 
-	private EditText title, host, port, username, password;
+	private EditText host, port, username, password;
 	private Spinner s;
 	private final DbHelper db = new DbHelper(this);
 	private int selectedConnectionId;
@@ -32,7 +32,6 @@ public class FTPconnect_activity extends Activity {
 
 		// view component reference
 		s = (Spinner) findViewById(R.id.selectCon);
-		title = (EditText) findViewById(R.id.txtConTitle);
 		host = (EditText) findViewById(R.id.txtConHost);
 		port = (EditText) findViewById(R.id.txtConPort);
 		username = (EditText) findViewById(R.id.txtConUser);
@@ -71,8 +70,8 @@ public class FTPconnect_activity extends Activity {
 			}
 
 			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-				// TODO Auto-generated method stub
+			public void onNothingSelected(AdapterView<?> arg0){
+				// Do nothing
 			}
 
 		});
@@ -98,34 +97,30 @@ public class FTPconnect_activity extends Activity {
 					new AlertDialog.Builder(FTPconnect_activity.this)
 							.setTitle("Connection name")
 							.setView(input)
-							.setPositiveButton("Save",
-									new DialogInterface.OnClickListener() {
-
-										@Override
-										public void onClick(DialogInterface dialog,	int which) {
-											String t = input.getText().toString();
-											if(!t.equals("")){
-												String pot = port.getText().toString();
-												String user = username.getText().toString();
-												String pass = password.getText().toString();
-												
-												validateFields(t, h, pot, user, pass);
-											} else {
-												showAlert("Connection name should not be blank");
-											}
-										}
-									})
-							.setNegativeButton("Cancel",
-									new DialogInterface.OnClickListener() {
-
-										@Override
-										public void onClick(DialogInterface dialog,
-												int which) {
-											// Canceled
-										}
-									}).show();
+							.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,	int which) {
+									String t = input.getText().toString();
+									if(!t.equals("")){
+										String pot = port.getText().toString();
+										String user = username.getText().toString();
+										String pass = password.getText().toString();
+										//
+										validateFields(t, h, pot, user, pass);
+									} else {
+										showAlert("Connection name shouldn't be blank");
+									}
+								}
+							})
+							.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									// Canceled
+								}
+							})
+							.show();
 				} else {
-					showAlert("Host name showld not be blank");
+					showAlert("Host name shouldn't be blank");
 				}
 			}
 		});
@@ -147,11 +142,28 @@ public class FTPconnect_activity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Server s = new Server();
-				s.set_id(selectedConnectionId);
-				db.deleteServer(s);
-				updateServerList();
+				new AlertDialog.Builder(FTPconnect_activity.this)
+				.setTitle("Do you want to delete "+s.getSelectedItem().toString()+" ?")
+				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Server s = new Server();
+						s.set_id(selectedConnectionId);
+						db.deleteServer(s);
+						//update spinner
+						updateServerList();
+						// show delete success message
+						Toast.makeText(getApplicationContext(), "Connection deleted", Toast.LENGTH_SHORT).show();
+					}
+				})
+				.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener(){
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// Do nothing
+					}
+				})
+				.show();
 			}
 		});
 	}
