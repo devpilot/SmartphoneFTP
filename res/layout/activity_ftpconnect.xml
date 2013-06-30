@@ -104,10 +104,10 @@
             android:layout_height="wrap_content" >
 
             <Button
-                android:id="@+id/btnSave"
+                android:id="@+id/btnDelete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/con_btn_save" />
+                android:text="@string/con_delete" />
 
             <Button
                 android:id="@+id/btnEdit"
@@ -116,10 +116,11 @@
                 android:text="@string/con_btn_edit" />
 
             <Button
-                android:id="@+id/btnDelete"
+                android:id="@+id/btnSave"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/con_delete" />
+                android:text="@string/con_btn_save" />
+
         </LinearLayout>
 
     </LinearLayout>
