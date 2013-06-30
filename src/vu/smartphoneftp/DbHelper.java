@@ -113,8 +113,14 @@ public class DbHelper extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getReadableDatabase();
 		String query = "SELECT "+ KEY_ID +" FROM "+ TABLE_ACCOUNTS +" WHERE "+ KEY_TITLE +" = '"+ server.getTitle()+"'";
 		Cursor c = db.rawQuery(query,null);
-		if(c != null && c.getCount() > 0)
+		if(c != null && c.getCount() > 0){
+			c.close();
+			db.close();
 			return true;
-		return false;
+		} else {
+			c.close();
+			db.close();
+			return false;
+		}
 	}
 }
