@@ -30,8 +30,8 @@ public class FTPconnect_activity extends Activity {
 
 		// view component reference
 		s = (Spinner) findViewById(R.id.selectCon);
-		title = (EditText) findViewById(R.id.txtConHost);
-//		host = (EditText) findViewById(R.id.txtConHost);
+		title = (EditText) findViewById(R.id.txtConTitle);
+		host = (EditText) findViewById(R.id.txtConHost);
 		port = (EditText) findViewById(R.id.txtConPort);
 		username = (EditText) findViewById(R.id.txtConUser);
 		password = (EditText) findViewById(R.id.txtConPass);
@@ -39,7 +39,7 @@ public class FTPconnect_activity extends Activity {
 		Button btnSave = (Button) findViewById(R.id.btnSave);
 		Button btnEdit = (Button) findViewById(R.id.btnEdit);
 		Button btnDelete = (Button) findViewById(R.id.btnDelete);
-		View accDetails = (LinearLayout) findViewById(R.id.accDetails);
+		final View accDetails = (LinearLayout) findViewById(R.id.accDetails);
 		
 		// load account list in spinner
 		updateServerList();
@@ -51,7 +51,13 @@ public class FTPconnect_activity extends Activity {
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int pos, long id) {
 				// return selected server id
-				int itemId = ((Server) parent.getItemAtPosition(pos)).get_id();
+				int itemId = ((Server) parent.getItemAtPosition(pos)).get_id();				
+				// toggle components according to item selected
+				if (itemId == 0) {
+					accDetails.setVisibility(View.VISIBLE);
+				} else {
+					accDetails.setVisibility(View.GONE);
+				}
 			}
 
 			@Override
@@ -61,48 +67,52 @@ public class FTPconnect_activity extends Activity {
 			}
 
 		});
-		
+
 		// Connect button click
 		btnConnect.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
-		
+
 		// Save button click
 		btnSave.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				final EditText input = new EditText(FTPconnect_activity.this);
 				new AlertDialog.Builder(FTPconnect_activity.this)
-				.setTitle("Connection name")
-				.setView(input)
-				.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// TODO call function to save details in database
-						if(input.getText().toString() != ""){
-							
-						}
-					}
-				})
-				.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// Canceled
-						
-					}
-				})
-				.show();
+						.setTitle("Connection name")
+						.setView(input)
+						.setPositiveButton("Save",
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										// TODO call function to save details in
+										// database
+										if (input.getText().toString() != "") {
+
+										}
+									}
+								})
+						.setNegativeButton("Cancel",
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										// Canceled
+
+									}
+								}).show();
 			}
 		});
-		
+
 		// Edit button Click
 		btnEdit.setOnClickListener(new OnClickListener() {
 
@@ -115,36 +125,41 @@ public class FTPconnect_activity extends Activity {
 
 			}
 		});
-		
+
 		// Delete button click
 		btnDelete.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
 	}
-	
+
 	private void updateServerList() {
 		// Get server list from DB
 		List<Server> servList = db.getServers();
 		// Initialize adapter
 		ArrayAdapter<Server> adapter = new ArrayAdapter<Server>(this,
 				android.R.layout.simple_spinner_item, servList);
+		// Inserting quick connect option
+		Server serv = new Server();
+		serv.set_id(0);
+		serv.setTitle("Quick connect");
+		adapter.insert(serv, 0);
 		// Assign adapter
 		s.setAdapter(adapter);
 	}
 
 	private void validateFields() {
-		
+
 	}
 
 	@Override
