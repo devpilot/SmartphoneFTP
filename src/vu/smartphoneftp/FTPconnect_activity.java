@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 public class FTPconnect_activity extends Activity {
 
@@ -40,7 +41,7 @@ public class FTPconnect_activity extends Activity {
 		final Button btnEdit = (Button) findViewById(R.id.btnEdit);
 		final Button btnDelete = (Button) findViewById(R.id.btnDelete);
 		final View accDetails = (LinearLayout) findViewById(R.id.accDetails);
-		
+
 		// load account list in spinner
 		updateServerList();
 
@@ -51,7 +52,7 @@ public class FTPconnect_activity extends Activity {
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int pos, long id) {
 				// return selected server id
-				int itemId = ((Server) parent.getItemAtPosition(pos)).get_id();				
+				int itemId = ((Server) parent.getItemAtPosition(pos)).get_id();
 				// toggle components according to item selected
 				if (itemId == 0) {
 					// while quick connect is selected
@@ -71,7 +72,6 @@ public class FTPconnect_activity extends Activity {
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {
 				// TODO Auto-generated method stub
-
 			}
 
 		});
@@ -91,35 +91,41 @@ public class FTPconnect_activity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				final EditText input = new EditText(FTPconnect_activity.this);
-				new AlertDialog.Builder(FTPconnect_activity.this)
-						.setTitle("Connection name")
-						.setView(input)
-						.setPositiveButton("Save",
-								new DialogInterface.OnClickListener() {
+				final String h = host.getText().toString();
+				if(!h.equals("")){
+					final EditText input = new EditText(FTPconnect_activity.this);
+					new AlertDialog.Builder(FTPconnect_activity.this)
+							.setTitle("Connection name")
+							.setView(input)
+							.setPositiveButton("Save",
+									new DialogInterface.OnClickListener() {
 
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-										// TODO call function to save details in
-										// database
-										if (input.getText().toString() != "") {
-
-										} else {
-											
+										@Override
+										public void onClick(DialogInterface dialog,	int which) {
+											String t = input.getText().toString();
+											if(!t.equals("")){
+												String pot = port.getText().toString();
+												String user = username.getText().toString();
+												String pass = password.getText().toString();
+												
+												validateFields(t, h, pot, user, pass);
+											} else {
+												showAlert("Connection name should not be blank");
+											}
 										}
-									}
-								})
-						.setNegativeButton("Cancel",
-								new DialogInterface.OnClickListener() {
+									})
+							.setNegativeButton("Cancel",
+									new DialogInterface.OnClickListener() {
 
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-										// Canceled
-
-									}
-								}).show();
+										@Override
+										public void onClick(DialogInterface dialog,
+												int which) {
+											// Canceled
+										}
+									}).show();
+				} else {
+					showAlert("Host name showld not be blank");
+				}
 			}
 		});
 
@@ -128,9 +134,8 @@ public class FTPconnect_activity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Intent i = new Intent(
-						"vu.smartphoneftp.ConnectionEdit_Activity");
+				// TODO need to start edit connection activity
+				Intent i = new Intent("vu.smartphoneftp.ConnectionEdit_Activity");
 				startActivityForResult(i, 1);
 
 			}
@@ -168,8 +173,29 @@ public class FTPconnect_activity extends Activity {
 		s.setAdapter(adapter);
 	}
 
-	private void validateFields() {
-
+	private void validateFields(String title, String host, String port, String username, String password) {
+		// Setting default value for blank fields
+		int port1 = (Integer) (!port.equals("") ? Integer.parseInt(port) : 21);
+		username = !username.equals("") ? username : "anonymous";
+		password = !password.equals("") ? password : "user@host";
+		// Insert into database
+		db.addServer(new Server(title, host, port1, username, password));
+		// update new info to spinner
+		updateServerList();
+		Toast.makeText(this, "Connection saved", Toast.LENGTH_SHORT).show();
+	}
+	
+	// show warning dialog
+	private void showAlert(String message){
+		new AlertDialog.Builder(FTPconnect_activity.this)
+		.setTitle(message)
+		.setIcon(android.R.drawable.ic_dialog_info)
+		.setNegativeButton(android.R.string.ok,	new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog,	int which) {
+				
+			}
+		}).show();
 	}
 
 	@Override
