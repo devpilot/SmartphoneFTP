@@ -131,15 +131,9 @@ public class FTPconnect_activity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// get selected connection details
-				Server server = db.getServer(selectedConnectionId);
 				Intent i = new Intent("vu.smartphoneftp.ConnectionEdit_Activity");
-				i.putExtra("id", server.get_id());
-				i.putExtra("title", server.getTitle());
-				i.putExtra("host", server.getHost());
-				i.putExtra("port",  String.valueOf(server.getPort()));
-				i.putExtra("username", server.getUsername());
-				i.putExtra("password", server.getPassword());
+				// Pass selected connection id
+				i.putExtra("id", selectedConnectionId);
 				startActivityForResult(i, REQUEST_CODE);
 
 			}
@@ -228,7 +222,7 @@ public class FTPconnect_activity extends Activity {
 		.setNegativeButton(android.R.string.ok,	new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog,	int which) {
-				
+				// Do nothing
 			}
 		}).show();
 	}

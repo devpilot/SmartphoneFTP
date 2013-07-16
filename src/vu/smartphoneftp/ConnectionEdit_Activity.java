@@ -12,6 +12,7 @@ import android.widget.EditText;
 
 public class ConnectionEdit_Activity extends Activity {
 	private String titleIntigtity = "";
+	private DbHelper db = new DbHelper(this);
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,15 +28,19 @@ public class ConnectionEdit_Activity extends Activity {
 		Button btnsave = (Button) findViewById(R.id.btnSave);
 		Button btnCancel = (Button) findViewById(R.id.btnCancel);
 		
-		// Set text from intent
+		// get connection id from parent activity
 		Intent i = getIntent();
-		titleIntigtity = i.getStringExtra("title");
 		final int id = i.getIntExtra("id", 0);
+		// Retrieve connection details from database
+		Server server = db.getServer(id);
+		titleIntigtity = server.getTitle();
+		
+		// populate editText with data
 		title.setText(titleIntigtity);
-		host.setText(i.getStringExtra("host"));
-		port.setText(i.getStringExtra("port"));
-		username.setText(i.getStringExtra("username"));
-		password.setText(i.getStringExtra("password"));
+		host.setText(server.getHost());
+		port.setText(String.valueOf(server.getPort()));
+		username.setText(server.getUsername());
+		password.setText(server.getPassword());
 		
 		// Save button click action
 		btnsave.setOnClickListener(new OnClickListener() {
@@ -71,7 +76,7 @@ public class ConnectionEdit_Activity extends Activity {
 			showAlert("Connection or host name should not be empty");
 			return false;
 		}
-		DbHelper db = new DbHelper(this);
+		
 		if(!title.equals(titleIntigtity)){
 			// check if connection name exist
 			Server s = new Server();
