@@ -123,4 +123,39 @@ public class DbHelper extends SQLiteOpenHelper {
 			return false;
 		}
 	}
+	
+	/**
+	 * Retrieve single connection details
+	 * @param id
+	 * @return server
+	 */
+	public Server getServer(int id) {
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.query(TABLE_ACCOUNTS, new String[] {
+				KEY_ID,KEY_TITLE, KEY_HOST, KEY_PORT, KEY_USER, KEY_PASS }, KEY_ID + "=?", new String[] { String.valueOf(id) }, null, null, null, null);
+		if (cursor != null)
+			cursor.moveToFirst();
+			Server server = new Server(Integer.parseInt(cursor.getString(0)),cursor.getString(1),cursor.getString(2),
+					Integer.parseInt(cursor.getString(3)),cursor.getString(4),cursor.getString(5));
+		// return contact
+		return server;
+	}
+	
+	/**
+	 * update single connection details
+	 * @param server
+	 * @return
+	 */
+	public int updateServer(Server server) {
+		SQLiteDatabase db = this.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(KEY_TITLE, server.getTitle());
+		values.put(KEY_HOST, server.getHost());
+		values.put(KEY_PORT, server.getPort());
+		values.put(KEY_USER, server.getUsername());
+		values.put(KEY_PASS, server.getPassword());
+		// updating row
+		return db.update(TABLE_ACCOUNTS, values, KEY_ID + " = ?",
+		new String[]{String.valueOf(server.get_id())});
+		}
 }

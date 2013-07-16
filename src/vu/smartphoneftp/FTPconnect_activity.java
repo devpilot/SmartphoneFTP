@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 public class FTPconnect_activity extends Activity {
 
+	private static final int REQUEST_CODE = 1;
 	private EditText host, port, username, password;
 	private Spinner s;
 	private final DbHelper db = new DbHelper(this);
@@ -130,9 +131,16 @@ public class FTPconnect_activity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO need to start edit connection activity
+				// get selected connection details
+				Server server = db.getServer(selectedConnectionId);
 				Intent i = new Intent("vu.smartphoneftp.ConnectionEdit_Activity");
-				startActivityForResult(i, 1);
+				i.putExtra("id", server.get_id());
+				i.putExtra("title", server.getTitle());
+				i.putExtra("host", server.getHost());
+				i.putExtra("port",  String.valueOf(server.getPort()));
+				i.putExtra("username", server.getUsername());
+				i.putExtra("password", server.getPassword());
+				startActivityForResult(i, REQUEST_CODE);
 
 			}
 		});
@@ -170,7 +178,11 @@ public class FTPconnect_activity extends Activity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
+		 if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
+			// update new info to spinner
+				updateServerList();
+				Toast.makeText(this, "Connection Updated", Toast.LENGTH_SHORT).show();
+		 }
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
