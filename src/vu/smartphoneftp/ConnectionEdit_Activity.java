@@ -89,7 +89,7 @@ public class ConnectionEdit_Activity extends Activity {
 		// Setting default value for blank fields
 		int port1 = (Integer) (!port.equals("") ? Integer.parseInt(port) : 21);
 		username = !username.equals("") ? username : "anonymous";
-		password = !password.equals("") ? password : "user@host";
+		password = !password.equals("") || !username.equals("anonymous") ? password : "user@host";
 		// update into database
 		db.updateServer(new Server(id, title, host, port1, username, password));
 		return true;
