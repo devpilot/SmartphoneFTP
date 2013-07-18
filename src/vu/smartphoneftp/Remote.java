@@ -8,102 +8,98 @@ import org.apache.commons.net.ftp.FTPReply;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.os.Handler;
+import android.os.AsyncTask;
 import android.util.Log;
 
-public class Remote{
+public class Remote {
 
 	private static final String TAG = "FTP";
 	private Context context;
 	private final FTPClient ftp = new FTPClient();
-	String server;
+
 	/**
 	 * @param context
 	 */
 	public Remote(Context context) {
 		this.context = context;
 	}
-
-	public void connect(final String server, final int port, final String username,
-			final String password) {
-        
-		final Handler h = new Handler();
+	
+	public void connect(final Server server) {
 		
-		ftp.setConnectTimeout(200);
-		
-		Runnable runnable = new Runnable() {
-
+		AsyncTask<Void, Void, Boolean> task = new AsyncTask<Void, Void, Boolean>() {
+			String msg;
 			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-
+			protected Boolean doInBackground(Void... params) {
+				ftp.setConnectTimeout(500);
 				try {
 					int reply;
-					if (port > 0) {
-
-						ftp.connect(server, port);
-					} else {
-						ftp.connect(server);
-					}
+					ftp.connect(server.getHost(), server.getPort());
 					reply = ftp.getReplyCode();
-
 					if (!FTPReply.isPositiveCompletion(reply)) {
 						ftp.disconnect();
 						Log.e(TAG, "FTP server refused connection.");
-						
 					}
 					Log.d(TAG, "Connected to server");
-					if(!ftp.login(username, password)){
+					if (!ftp.login(server.getUsername(), server.getPassword())) {
+						msg = ftp.getReplyString();
 						Log.d(TAG, ftp.getReplyString());
-						
-						h.post(new Runnable() {
-							@Override
-							public void run() {
-								showAlert(ftp.getReplyString());
-							}
-						});
+						ftp.logout();
+						return false;
 					}
-					// enter passive mode
-					ftp.enterLocalPassiveMode();
-					
+					// should be connected here
+					Log.d(TAG, ftp.getReplyString());
+					return true;
 				} catch (IOException e) {
-					Log.e(TAG, e.getMessage());
 					if (ftp.isConnected()) {
-						try {
-							ftp.disconnect();
-						} catch (IOException f) {
-							// do nothing
-						}
-					}
+		                try {
+		                    ftp.disconnect();
+		                } catch (IOException f) {
+		                    // do nothing
+		                }
+		            }
+					msg = "Could not connect to server";
+					Log.e(TAG, e.getMessage());
+				}
+				return false;
+			}
+
+			@Override
+			protected void onPostExecute(Boolean result) {
+				super.onPostExecute(result);
+				Log.d(TAG, String.valueOf(result));
+				if(!result){
+					showAlert(msg);
 				}
 			}
 		};
-		new Thread(runnable).start();
+		task.execute();
 	}
-	
-	private void showAlert(String message){
-		// building dialog
-		AlertDialog ad = new AlertDialog.Builder(context).create();
-		//ad.setTitle("hello");
-		ad.setMessage(message);
-		ad.show();
-	}
+
+	 private void showAlert(String message){
+		 // building dialog
+		 AlertDialog ad = new AlertDialog.Builder(context).create();
+		 ad.setIcon(android.R.drawable.ic_dialog_alert);
+		 ad.setTitle("Error");
+		 ad.setMessage(message);
+		 ad.show();
+	 }
 
 	public void getList() {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				try {
-					FTPFile[] f = ftp.mlistDir();
+					// enter passive mode
+					ftp.enterLocalPassiveMode();
+					FTPFile[] f = ftp.listFiles();
 					for (FTPFile ftpFile : f) {
 						Log.d(TAG, ftpFile.toFormattedString());
 					}
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					Log.e(TAG, e.getMessage());
 				}
 			}
 		};
 		new Thread(runnable).start();
-		
-	}
+
+	};
 }
