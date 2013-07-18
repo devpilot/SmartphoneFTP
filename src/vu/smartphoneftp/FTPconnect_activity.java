@@ -42,7 +42,6 @@ public class FTPconnect_activity extends Activity {
 		final Button btnEdit = (Button) findViewById(R.id.btnEdit);
 		final Button btnDelete = (Button) findViewById(R.id.btnDelete);
 		final View accDetails = (LinearLayout) findViewById(R.id.accDetails);
-
 		// load account list in spinner
 		updateServerList();
 
@@ -82,8 +81,31 @@ public class FTPconnect_activity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-
+				if(selectedConnectionId == 0){
+					// get values from editText
+					String h = host.getText().toString();
+					// Host should not be empty
+					if(!h.equals("")){
+						String pot = port.getText().toString();
+						String user = username.getText().toString();
+						String pass = password.getText().toString();
+						// Setting default value for blank fields
+						int port1 = (Integer) (!pot.equals("") ? Integer.parseInt(pot) : 21);
+						user = !user.equals("") ? user : "anonymous";
+						pass = !pass.equals("") || !user.equals("anonymous") ? pass : "user@host";
+						// pass value to connect method
+						Server server = new Server("", h, port1, user, pass);
+						Remote remote = new Remote(FTPconnect_activity.this);
+						remote.connect(server);
+					} else {
+						showAlert("Host should not be empty");
+					}
+				} else {
+					// get values from database
+					Server server = db.getServer(selectedConnectionId);
+					Remote remote = new Remote(FTPconnect_activity.this);
+					remote.connect(server);
+				}
 			}
 		});
 
