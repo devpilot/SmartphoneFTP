@@ -16,5 +16,6 @@
     <string name="con_delete">Delete</string>
     <string name="btn_cancel">Cancel</string>
     <string name="activity_edit_title">Edit connection</string>
+    <string name="title_activity_filebrowser">Files</string>
 
 </resources>
