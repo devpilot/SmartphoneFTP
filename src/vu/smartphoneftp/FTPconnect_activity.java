@@ -96,7 +96,7 @@ public class FTPconnect_activity extends Activity {
 						// pass value to connect method
 						Server server = new Server("", h, port1, user, pass);
 						Remote remote = new Remote(FTPconnect_activity.this);
-						remote.connect(server);
+						remote.connectServer(server, false);
 					} else {
 						showAlert("Host should not be empty");
 					}
@@ -104,7 +104,7 @@ public class FTPconnect_activity extends Activity {
 					// get values from database
 					Server server = db.getServer(selectedConnectionId);
 					Remote remote = new Remote(FTPconnect_activity.this);
-					remote.connect(server);
+					remote.connectServer(server, false);
 				}
 			}
 		});
@@ -157,7 +157,6 @@ public class FTPconnect_activity extends Activity {
 				// Pass selected connection id
 				i.putExtra("id", selectedConnectionId);
 				startActivityForResult(i, REQUEST_CODE);
-
 			}
 		});
 
