@@ -137,6 +137,8 @@ public class DbHelper extends SQLiteOpenHelper {
 			cursor.moveToFirst();
 			Server server = new Server(Integer.parseInt(cursor.getString(0)),cursor.getString(1),cursor.getString(2),
 					Integer.parseInt(cursor.getString(3)),cursor.getString(4),cursor.getString(5));
+			cursor.close();
+			db.close();
 		// return contact
 		return server;
 	}
