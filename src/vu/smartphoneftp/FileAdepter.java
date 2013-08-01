@@ -46,15 +46,9 @@ public class FileAdepter extends ArrayAdapter<Items> {
 
 	    ViewHolder holder = (ViewHolder) rowView.getTag();
 	    Items s =  values.get(position);
+	    holder.image.setImageResource(s.getIcon());
 	    holder.name.setText(s.getName());
 	    holder.properties.setText(s.getProperties());
-//	    if (s.startsWith("Windows7") || s.startsWith("iPhone")
-//	        || s.startsWith("Solaris")) {
-//	      holder.image.setImageResource(R.drawable.ic_launcher);
-//	    } else {
-	      holder.image.setImageResource(R.drawable.ic_launcher);
-//	    }
-
 	    return rowView;
 	  }
 }
