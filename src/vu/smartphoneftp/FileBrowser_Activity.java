@@ -17,7 +17,7 @@ public class FileBrowser_Activity extends Activity {
 		setContentView(R.layout.activity_filebrowser);
 		
 		Remote r  = new Remote(this);
-		r.getList();
+		r.getList("/");
 		
 		fl = (ListView) findViewById(R.id.fileList);
 	}

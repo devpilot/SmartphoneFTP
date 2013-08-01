@@ -91,14 +91,31 @@ public class Remote {
 		}
 	}
 
-	public void getList() {
-		new AsyncTask<Void, Void, FTPFile[]>(){
+	public void getList(final String path) {
+		new AsyncTask<Void, Void, List<Items>>(){
 			@Override
-			protected FTPFile[] doInBackground(Void... params) {
+			protected List<Items> doInBackground(Void... params) {
 				try {
 					// enter passive mode
 					ftp.enterLocalPassiveMode();
-					return ftp.listFiles();
+					FTPFile[] files = ftp.listFiles(path);
+					// if remote directory not empty
+					if(files != null){
+						List<Items> i = new ArrayList<Items>();
+						for (FTPFile ftpFile : files) {
+							if(ftpFile.isDirectory()){
+								// add directories
+								i.add(new Items(ftpFile.getName(), "", R.drawable.ic_folder));
+							} else {
+								// add files
+								// TODO need to format file size
+								i.add(new Items(ftpFile.getName(), String.valueOf(ftpFile.getSize()), R.drawable.ic_file));
+							}
+//							Log.d(TAG, ftpFile.toFormattedString());
+						}
+						// return remote contents
+						return i;
+					}
 				} catch (IOException e) {
 					if (ftp.isConnected()) {
 						try {
@@ -114,17 +131,10 @@ public class Remote {
 			}
 
 			@Override
-			protected void onPostExecute(FTPFile[] result) {
+			protected void onPostExecute(List<Items> result) {
 				super.onPostExecute(result);
-				// if remote directory not empty
-				if(result != null){
-					List<Items> i = new ArrayList<Items>();
-					for (FTPFile ftpFile : result) {
-						i.add(new Items(ftpFile.getName(), String.valueOf(ftpFile.getSize()), R.drawable.ic_launcher));
-						Log.d(TAG, ftpFile.toFormattedString());
-					}
-					((FileBrowser_Activity) context).loadFileList(i);
-				}
+				// call content load method
+				((FileBrowser_Activity) context).loadFileList(result);
 			}
 		}.execute();
 	}
