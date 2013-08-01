@@ -1,11 +1,14 @@
 package vu.smartphoneftp;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -17,14 +20,14 @@ import android.util.Log;
 public class Remote {
 
 	private static final String TAG = "FTP";
-	private Context context;
+	private Activity context;
 	private static FTPClient ftp;
 	private static Server server;
 
 	/**
 	 * @param context
 	 */
-	public Remote(Context context) {
+	public Remote(Activity context) {
 		this.context = context;
 	}
 
@@ -97,9 +100,15 @@ public class Remote {
 					ftp.enterLocalPassiveMode();
 					return ftp.listFiles();
 				} catch (IOException e) {
+					if (ftp.isConnected()) {
+						try {
+							ftp.disconnect();
+						} catch (IOException f) {
+							// do nothing
+						}
+					}
 					Log.e(TAG, e.getMessage());
-					connectServer(server, true);
-					getList();
+					// TODO need to reconnect if connection failed
 				}
 				return null;
 			}
@@ -107,10 +116,14 @@ public class Remote {
 			@Override
 			protected void onPostExecute(FTPFile[] result) {
 				super.onPostExecute(result);
+				// if remote directory not empty
 				if(result != null){
+					List<Items> i = new ArrayList<Items>();
 					for (FTPFile ftpFile : result) {
+						i.add(new Items(ftpFile.getName(), String.valueOf(ftpFile.getSize()), R.drawable.ic_launcher));
 						Log.d(TAG, ftpFile.toFormattedString());
 					}
+					((FileBrowser_Activity) context).loadFileList(i);
 				}
 			}
 		}.execute();
