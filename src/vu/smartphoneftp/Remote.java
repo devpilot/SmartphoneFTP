@@ -134,7 +134,8 @@ public class Remote {
 			protected void onPostExecute(List<Items> result) {
 				super.onPostExecute(result);
 				// call content load method
-				((FileBrowser_Activity) context).loadFileList(result);
+				if(result != null)
+					((FileBrowser_Activity) context).loadFileList(result);
 			}
 		}.execute();
 	}
