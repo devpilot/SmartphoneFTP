@@ -33,7 +33,12 @@
             android:src="@drawable/ic_home" />
 
     </RelativeLayout>
-
+    
+    <View
+	    android:layout_width="match_parent"
+	    android:layout_height="1dp"
+	    android:background="#33B5E5" />
+    
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
