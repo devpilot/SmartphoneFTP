@@ -3,15 +3,15 @@ package vu.smartphoneftp;
 import android.annotation.SuppressLint;
 
 public class Items {
-	private String name, properties;
+	private String name, fileSize;
 	private int icon;
 
 	public Items() {
 	}
 
-	public Items(String name, String properties, int icon) {
+	public Items(String name, String fileSize, int icon) {
 		this.name = name;
-		this.properties = properties;
+		this.fileSize = fileSize;
 		this.icon = icon;
 	}
 
@@ -23,12 +23,12 @@ public class Items {
 		this.name = name;
 	}
 
-	public String getProperties() {
-		return properties;
+	public String getfileSize() {
+		return fileSize;
 	}
 
-	public void setProperties(String properties) {
-		this.properties = properties;
+	public void setfileSize(String fileSize) {
+		this.fileSize = fileSize;
 	}
 
 	public int getIcon() {

@@ -15,8 +15,7 @@ public class FileAdepter extends ArrayAdapter<Items> {
 	private final List<Items> values;
 
 	static class ViewHolder {
-		public TextView name;
-		public TextView properties;
+		public TextView name, fileSize;
 		public ImageView image;
 	}
 
@@ -39,7 +38,7 @@ public class FileAdepter extends ArrayAdapter<Items> {
 	      rowView = inflater.inflate(R.layout.rowlayout, null);
 	      ViewHolder viewHolder = new ViewHolder();
 	      viewHolder.name = (TextView) rowView.findViewById(R.id.textName);
-	      viewHolder.properties = (TextView) rowView.findViewById(R.id.textProp);
+	      viewHolder.fileSize = (TextView) rowView.findViewById(R.id.textProp);
 	      viewHolder.image = (ImageView) rowView.findViewById(R.id.imageIcon);
 	      rowView.setTag(viewHolder);
 	    }
@@ -48,7 +47,7 @@ public class FileAdepter extends ArrayAdapter<Items> {
 	    Items s =  values.get(position);
 	    holder.image.setImageResource(s.getIcon());
 	    holder.name.setText(s.getName());
-	    holder.properties.setText(s.getProperties());
+	    holder.fileSize.setText(s.getfileSize());
 	    return rowView;
 	  }
 }
