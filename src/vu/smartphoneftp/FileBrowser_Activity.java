@@ -8,9 +8,13 @@ import android.annotation.SuppressLint;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -60,6 +64,9 @@ public class FileBrowser_Activity extends ListActivity {
 				showLocalfiles(path);
 			}
 		});
+		
+		// Register context menu
+		registerForContextMenu(this.getListView());
 	}
 	
 	@Override
@@ -120,11 +127,35 @@ public class FileBrowser_Activity extends ListActivity {
 			btnRoot.setEnabled(true);
 		}
 	}
+	
 	public void loadFileList(List<Items> items){
 		this.items = items;
 		FileAdepter adapter = new FileAdepter(this, items);
 		// Assign adapter to ListView
 		setListAdapter(adapter);
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+        int position = info.position;
+        Items seleItem = items.get(position);
+        // TODO check file or directory
+		seleItem.getName();
+		// Add context title
+		menu.setHeaderTitle("File Action");
+		menu.add("Download");
+		menu.add("Rename");
+		menu.add("Move");
+		menu.add("Copy");
+		menu.add("Delete");
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		return super.onContextItemSelected(item);
 	}
 
 	@Override
