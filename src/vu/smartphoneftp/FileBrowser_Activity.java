@@ -6,8 +6,10 @@ import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -20,12 +22,13 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class FileBrowser_Activity extends ListActivity {
-	private List<Items> items;
+	private static final int REQUEST_CODE = 2;
+	protected List<Items> items;
 	Remote r;
 	public boolean localMode = true;
-	String path = "/";
+	protected String path = "/";
 	File f;
-	private ImageButton btnRoot, btnUp;
+	protected ImageButton btnRoot, btnUp;
 	
 	@SuppressLint("SdCardPath")
 	@Override
@@ -72,11 +75,12 @@ public class FileBrowser_Activity extends ListActivity {
 	@Override
 	public void onBackPressed() {
 //		super.onBackPressed();
-		if(!path.equals("/")){
+		if(path.equals("/")){
+			// TODO prompt disconnect and close
+		} else {
 			String path = f.getParent();
 			showLocalfiles(path);
 		}
-		// TODO prompt disconnect and close
 	}
 
 	@Override
@@ -148,14 +152,28 @@ public class FileBrowser_Activity extends ListActivity {
 			menu.add("Upload");
 		}
 		menu.add("Rename");
-		menu.add("Move");
 		menu.add("Copy");
+		menu.add("Cut");
 		menu.add("Delete");
 	}
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
+		if(item.getTitle().equals("Cut")){
+			Intent i = new Intent("vu.smartphoneftp.SelectDestination_Activity");
+			startActivityForResult(i, REQUEST_CODE);
+		}
 		return super.onContextItemSelected(item);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
+			String selectedPath = data.getStringExtra("pastePath");
+			// TODO Call methods to perform cut, copy upload download action
+			Log.d("FTP", selectedPath);
+		}
 	}
 
 	@Override
