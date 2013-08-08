@@ -3,42 +3,56 @@ package vu.smartphoneftp;
 import android.annotation.SuppressLint;
 
 public class Items {
-	private String name, fileSize;
+	private String name;
+	private long fileSize;
 	private int icon;
+	private boolean isDirectory;
 
 	public Items() {
 	}
-
-	public Items(String name, String fileSize, int icon) {
+	
+	/**
+	 * Constructor for directory item
+	 * @param name
+	 * @param icon
+	 */
+	public Items(String name, int icon) {
+		this.name = name;
+		this.icon = icon;
+		this.isDirectory = true;
+	}
+	
+	/**
+	 * Constructor for file item
+	 * @param name
+	 * @param fileSize
+	 * @param icon
+	 */
+	public Items(String name, long fileSize, int icon) {
 		this.name = name;
 		this.fileSize = fileSize;
 		this.icon = icon;
+		this.isDirectory = false;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public String getfileSize() {
-		return fileSize;
-	}
-
-	public void setfileSize(String fileSize) {
-		this.fileSize = fileSize;
+		if(isDirectory)
+			return "";
+		return humanReadableByteCount(fileSize, true);
 	}
 
 	public int getIcon() {
 		return icon;
 	}
 
-	public void setIcon(int icon) {
-		this.icon = icon;
+	public boolean isDirectory() {
+		return isDirectory;
 	}
-	
+
 	@SuppressLint("DefaultLocale")
 	public static String humanReadableByteCount(long bytes, boolean si) {
 	    int unit = si ? 1000 : 1024;

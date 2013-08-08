@@ -105,11 +105,10 @@ public class Remote {
 						for (FTPFile ftpFile : files) {
 							if(ftpFile.isDirectory()){
 								// add directories
-								i.add(new Items(ftpFile.getName(), "", R.drawable.ic_folder));
+								i.add(new Items(ftpFile.getName(), R.drawable.ic_folder));
 							} else {
 								// add files
-								// TODO need to format file size
-								i.add(new Items(ftpFile.getName(), String.valueOf(ftpFile.getSize()), R.drawable.ic_file));
+								i.add(new Items(ftpFile.getName(), ftpFile.getSize(), R.drawable.ic_file));
 							}
 //							Log.d(TAG, ftpFile.toFormattedString());
 						}

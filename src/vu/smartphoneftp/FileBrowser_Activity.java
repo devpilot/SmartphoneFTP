@@ -87,8 +87,7 @@ public class FileBrowser_Activity extends ListActivity {
 		if(!this.path.equals("/"))
 			path += "/";
 		path += currentFile.getName();
-		File f = new File(path);
-		if (f.isDirectory()) {
+		if (currentFile.isDirectory()) {
 			showLocalfiles(path);
 		}
 	}
@@ -102,9 +101,9 @@ public class FileBrowser_Activity extends ListActivity {
 			items = new ArrayList<Items>();
 			for (File file : files) {
 				if(file.isDirectory()){
-					items.add(new Items(file.getName(), "", R.drawable.ic_folder));
+					items.add(new Items(file.getName(), R.drawable.ic_folder));
 				} else {
-					items.add(new Items(file.getName(), Items.humanReadableByteCount(file.length(), true), R.drawable.ic_file));
+					items.add(new Items(file.getName(), file.length(), R.drawable.ic_file));
 				}
 			}
 			// display files in listview
@@ -142,11 +141,12 @@ public class FileBrowser_Activity extends ListActivity {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
         int position = info.position;
         Items seleItem = items.get(position);
-        // TODO check file or directory
-		seleItem.getName();
-		// Add context title
-		menu.setHeaderTitle("File Action");
-		menu.add("Download");
+		if(seleItem.isDirectory()){
+			menu.setHeaderTitle("Folder Action");
+		} else {
+			menu.setHeaderTitle("File Action");
+			menu.add("Upload");
+		}
 		menu.add("Rename");
 		menu.add("Move");
 		menu.add("Copy");
