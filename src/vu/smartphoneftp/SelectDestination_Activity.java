@@ -17,7 +17,7 @@ public class SelectDestination_Activity extends FileBrowserBase{
 		setContentView(R.layout.activity_select_destination);
 		
 		Button btnPaste = (Button) findViewById(R.id.btnPaste);
-		Button btnCancel = (Button) findViewById(R.id.btnCancel1);
+		Button btnCancel = (Button) findViewById(R.id.btnCancel);
 		
 		CharSequence ctxAction = "";
 		// Get passed intent data
