@@ -8,40 +8,26 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
-
-public class SelectDestination_Activity extends FileBrowser_Activity{
+public class SelectDestination_Activity extends FileBrowserBase{
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_select_destination);
 		
-		btnUp = (ImageButton) findViewById(R.id.btnUp);
-		btnRoot = (ImageButton) findViewById(R.id.btnRoot);
 		Button btnPaste = (Button) findViewById(R.id.btnPaste);
 		Button btnCancel = (Button) findViewById(R.id.btnCancel1);
 		
-		btnUp.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				String path = f.getParent();
-				showLocalfiles(path);
-			}
-		});
-		
-		// Go to filesystem root
-		btnRoot.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				path = "/";
-				showLocalfiles(path);
-			}
-		});
+		CharSequence ctxAction = "";
+		// Get passed intent data
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+		    ctxAction = extras.getCharSequence("ctxAction");
+		}
+		setTitle(ctxAction +" to");
+		// set positive button text
+		btnPaste.setText(ctxAction);
 		
 		btnPaste.setOnClickListener(new OnClickListener() {
 			
@@ -62,6 +48,7 @@ public class SelectDestination_Activity extends FileBrowser_Activity{
 				finish();				
 			}
 		});
+		super.onCreate(savedInstanceState);
 	}
 	
 	@Override
