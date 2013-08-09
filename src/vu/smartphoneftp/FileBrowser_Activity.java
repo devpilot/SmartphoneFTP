@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -26,12 +27,12 @@ import android.widget.Toast;
 public class FileBrowser_Activity extends ListActivity {
 	private static final int REQUEST_CODE = 2;
 	protected List<Items> items;
-	Remote r;
-	public boolean localMode = true;
+	public boolean isRemoteMode = false;
 	protected String path = "/";
-	File f;
 	protected ImageButton btnRoot, btnUp;
-	
+	protected File f;
+	private Remote remote;
+
 	@SuppressLint("SdCardPath")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +42,7 @@ public class FileBrowser_Activity extends ListActivity {
 		// Get button reference
 		btnUp = (ImageButton) findViewById(R.id.btnUp);
 		btnRoot = (ImageButton) findViewById(R.id.btnRoot);
+		Button btnSwitchMode = (Button) findViewById(R.id.btnSwitchMode);
 		
 //		r  = new Remote(this);
 //		r.getList("/");
@@ -50,23 +52,31 @@ public class FileBrowser_Activity extends ListActivity {
 			path = "/sdcard";
 		}
 		showLocalfiles(path);
-		
+
 		btnUp.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				String path = f.getParent();
 				showLocalfiles(path);
 			}
 		});
-		
+
 		// Go to filesystem root
 		btnRoot.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				path = "/";
 				showLocalfiles(path);
+			}
+		});
+
+		btnSwitchMode.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
 			}
 		});
 		
@@ -169,19 +179,34 @@ public class FileBrowser_Activity extends ListActivity {
 			menu.setHeaderTitle("Folder Action");
 		} else {
 			menu.setHeaderTitle("File Action");
-			menu.add("Upload");
+			if(isRemoteMode){
+				menu.add("Download");
+			} else {
+				menu.add("Upload");
+			}
 		}
 		menu.add("Rename");
-		menu.add("Copy");
 		menu.add("Cut");
+		menu.add("Copy");
 		menu.add("Delete");
 	}
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		if(item.getTitle().equals("Cut")){
-			Intent i = new Intent("vu.smartphoneftp.SelectDestination_Activity");
-			startActivityForResult(i, REQUEST_CODE);
+		CharSequence ctxAction = item.getTitle();
+		if(ctxAction.equals("Download")){
+			// TODO Download call
+		} else if(ctxAction.equals("Upload")) {
+			// TODO Upload call
+			destinationDialog(ctxAction);
+		} else if (ctxAction.equals("Rename")) {
+			// TODO show prompt and Rename call
+		} else if (ctxAction.equals("Cut")) {
+			// TODO Cut call
+		} else if (ctxAction.equals("Copy")) {
+			// TODO Copy call
+		} else {
+			// TODO Delete call
 		}
 		return super.onContextItemSelected(item);
 	}
@@ -200,5 +225,11 @@ public class FileBrowser_Activity extends ListActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.file_browser_, menu);
 		return true;
+	}
+
+	private void destinationDialog(CharSequence ctxAction) {
+		Intent i = new Intent("vu.smartphoneftp.SelectDestination_Activity");
+		i.putExtra("ctxAction", ctxAction);
+		startActivityForResult(i, REQUEST_CODE);
 	}
 }
