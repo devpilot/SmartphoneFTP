@@ -32,6 +32,15 @@
             android:scaleType="fitCenter"
             android:src="@drawable/ic_home" />
 
+        <Button
+            android:id="@+id/btnSwitchMode"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:text="Button" />
+
     </RelativeLayout>
     
     <View
