@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -77,6 +79,24 @@ public class FileBrowser_Activity extends ListActivity {
 //		super.onBackPressed();
 		if(path.equals("/")){
 			// TODO prompt disconnect and close
+			new AlertDialog.Builder(this)
+			.setTitle("Disconnect?")
+			.setMessage("Would you like to Disconnect and return to connect screen?")
+			.setIcon(android.R.drawable.ic_dialog_alert)
+			.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// TODO call FTP disconnect method
+					finish();
+				}
+			})
+			.setNegativeButton(android.R.string.cancel,	new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog,	int which) {
+					// Do nothing
+				}
+			}).show();
 		} else {
 			String path = f.getParent();
 			showLocalfiles(path);
