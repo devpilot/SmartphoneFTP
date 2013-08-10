@@ -10,7 +10,6 @@ import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -26,7 +25,7 @@ import android.widget.Toast;
 public class FileBrowserBase extends ListActivity {
 	private static final int REQUEST_CODE = 2;
 	protected List<Items> items;
-	public boolean isRemoteMode = true;
+	protected boolean isRemoteMode = true;
 	protected String path = "/";
 	protected ImageButton btnRoot, btnUp;
 	protected File f;
@@ -41,24 +40,23 @@ public class FileBrowserBase extends ListActivity {
 		btnUp = (ImageButton) findViewById(R.id.btnUp);
 		btnRoot = (ImageButton) findViewById(R.id.btnRoot);
 		
-		if(isRemoteMode){
-			// load remote root directory in listview
-			remote.showRemoteFiles(null);
-		} else {
-			// Check if sdcard exist
-			String state = Environment.getExternalStorageState();
-			if (Environment.MEDIA_MOUNTED.equals(state)) {
-				path = "/sdcard";
-			}
-			showLocalfiles(path);
-		}
+//		if(isRemoteMode){
+//			// load remote root directory in listview
+//			remote.showRemoteFiles(null);
+//		} else {
+//			// Check if sdcard exist
+//			String state = Environment.getExternalStorageState();
+//			if (Environment.MEDIA_MOUNTED.equals(state)) {
+//				path = "/sdcard";
+//			}
+//			showLocalfiles(path);
+//		}
 
 		btnUp.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				if(isRemoteMode){
-					// TODO remote Up
 					remote.getParent();
 				} else {
 					String path = f.getParent();
@@ -73,7 +71,6 @@ public class FileBrowserBase extends ListActivity {
 			@Override
 			public void onClick(View v) {
 				if(isRemoteMode){
-					// TODO remote root
 					remote.getRootDir();
 				} else {
 					path = "/";
@@ -92,7 +89,6 @@ public class FileBrowserBase extends ListActivity {
 			backPath = path;
 		}
 		if(backPath.equals("/")){
-			// TODO prompt disconnect and close
 			new AlertDialog.Builder(this)
 			.setTitle("Disconnect?")
 			.setMessage("Would you like to Disconnect and return to connect screen?")
