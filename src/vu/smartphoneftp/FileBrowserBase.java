@@ -23,14 +23,14 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public abstract class FileBrowserBase extends ListActivity {
+public class FileBrowserBase extends ListActivity {
 	private static final int REQUEST_CODE = 2;
 	protected List<Items> items;
-	public boolean isRemoteMode = false;
+	public boolean isRemoteMode = true;
 	protected String path = "/";
 	protected ImageButton btnRoot, btnUp;
 	protected File f;
-	private Remote remote;
+	private final Remote remote = new Remote(this);
 
 	@SuppressLint("SdCardPath")
 	@Override
@@ -40,22 +40,30 @@ public abstract class FileBrowserBase extends ListActivity {
 		// Get button reference
 		btnUp = (ImageButton) findViewById(R.id.btnUp);
 		btnRoot = (ImageButton) findViewById(R.id.btnRoot);
-				
-//		r  = new Remote(this);
-//		r.getList("/");
 		
-		String state = Environment.getExternalStorageState();
-		if (Environment.MEDIA_MOUNTED.equals(state)) {
-			path = "/sdcard";
+		if(isRemoteMode){
+			// load remote root directory in listview
+			remote.showRemoteFiles(null);
+		} else {
+			// Check if sdcard exist
+			String state = Environment.getExternalStorageState();
+			if (Environment.MEDIA_MOUNTED.equals(state)) {
+				path = "/sdcard";
+			}
+			showLocalfiles(path);
 		}
-		showLocalfiles(path);
 
 		btnUp.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				String path = f.getParent();
-				showLocalfiles(path);
+				if(isRemoteMode){
+					// TODO remote Up
+					remote.getParent();
+				} else {
+					String path = f.getParent();
+					showLocalfiles(path);
+				}
 			}
 		});
 
@@ -64,16 +72,26 @@ public abstract class FileBrowserBase extends ListActivity {
 
 			@Override
 			public void onClick(View v) {
-				path = "/";
-				showLocalfiles(path);
+				if(isRemoteMode){
+					// TODO remote root
+					remote.getRootDir();
+				} else {
+					path = "/";
+					showLocalfiles(path);
+				}
 			}
 		});
 	}
 	
 	@Override
 	public void onBackPressed() {
-//		super.onBackPressed();
-		if(path.equals("/")){
+		String backPath;
+		if(isRemoteMode){
+			backPath = remote.ftpWorkingDirectory;
+		} else {
+			backPath = path;
+		}
+		if(backPath.equals("/")){
 			// TODO prompt disconnect and close
 			new AlertDialog.Builder(this)
 			.setTitle("Disconnect?")
@@ -94,8 +112,12 @@ public abstract class FileBrowserBase extends ListActivity {
 				}
 			}).show();
 		} else {
-			String path = f.getParent();
-			showLocalfiles(path);
+			if(isRemoteMode){
+				remote.getParent();
+			} else {
+				String path = f.getParent();
+				showLocalfiles(path);
+			}
 		}
 	}
 
@@ -103,12 +125,16 @@ public abstract class FileBrowserBase extends ListActivity {
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		Items currentFile = items.get(position);
-		String path = this.path;
-		if(!this.path.equals("/"))
-			path += "/";
-		path += currentFile.getName();
 		if (currentFile.isDirectory()) {
-			showLocalfiles(path);
+			if(isRemoteMode){
+				remote.showRemoteFiles(currentFile.getName());
+			} else {
+				String path = this.path;
+				if(!this.path.equals("/"))
+					path += "/";
+				path += currentFile.getName();
+				showLocalfiles(path);
+			}
 		}
 	}
 	
@@ -182,6 +208,7 @@ public abstract class FileBrowserBase extends ListActivity {
 		CharSequence ctxAction = item.getTitle();
 		if(ctxAction.equals("Download")){
 			// TODO Download call
+			destinationDialog(ctxAction);
 		} else if(ctxAction.equals("Upload")) {
 			// TODO Upload call
 			destinationDialog(ctxAction);
