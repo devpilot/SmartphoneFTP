@@ -30,7 +30,7 @@ public class FileBrowserBase extends ListActivity {
 	protected String path = "/";
 	protected ImageButton btnRoot, btnUp;
 	protected File f;
-	private final Remote remote = new Remote(this);
+	protected final Remote remote = new Remote(this);
 
 	@SuppressLint("SdCardPath")
 	@Override
