@@ -93,6 +93,7 @@ public class Remote {
 					}
 				} catch (IOException e) {
 					// TODO reconnect
+					Log.e(TAG, e.getMessage());
 				}
 				return null;
 			}
@@ -119,8 +120,8 @@ public class Remote {
 					}
 				} catch (IOException e) {
 					// TODO reconnect
+					Log.e(TAG, e.getMessage());
 				}
-				Log.d(TAG, "no parent");
 				return null;
 			}
 			
