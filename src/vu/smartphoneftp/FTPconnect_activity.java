@@ -95,16 +95,16 @@ public class FTPconnect_activity extends Activity {
 						pass = !pass.equals("") || !user.equals("anonymous") ? pass : "user@host";
 						// pass value to connect method
 						Server server = new Server("", h, port1, user, pass);
-						Remote remote = new Remote(FTPconnect_activity.this);
-						remote.connectServer(server, false);
+						Remote remote = new Remote(FTPconnect_activity.this,server);
+						remote.connectServer();
 					} else {
 						showAlert("Host should not be empty");
 					}
 				} else {
 					// get values from database
 					Server server = db.getServer(selectedConnectionId);
-					Remote remote = new Remote(FTPconnect_activity.this);
-					remote.connectServer(server, false);
+					Remote remote = new Remote(FTPconnect_activity.this,server);
+					remote.connectServer();
 				}
 			}
 		});
