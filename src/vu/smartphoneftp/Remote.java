@@ -22,8 +22,9 @@ public class Remote {
 	private static final String TAG = "FTP";
 	private static final FTPClient client = new FTPClient();
 	private Activity activity;
-	private static Server server;
-	
+	private static Server server;	
+	public String ftpWorkingDirectory;
+
 	/**
 	 * 
 	 * @param activity
@@ -74,6 +75,7 @@ public class Remote {
 			@Override
 			protected void onPostExecute(List<Items> result) {
 				super.onPostExecute(result);
+				((FileBrowserBase) activity).toggleUpbtn(ftpWorkingDirectory);
 				// call content load method
 				if(result != null)
 					((FileBrowserBase) activity).loadFileList(result);
@@ -98,6 +100,7 @@ public class Remote {
 			@Override
 			protected void onPostExecute(List<Items> result) {
 				super.onPostExecute(result);
+				((FileBrowserBase) activity).toggleUpbtn(ftpWorkingDirectory);
 				// call content load method
 				if(result != null)
 					((FileBrowserBase) activity).loadFileList(result);
@@ -124,6 +127,7 @@ public class Remote {
 			@Override
 			protected void onPostExecute(List<Items> result) {
 				super.onPostExecute(result);
+				((FileBrowserBase) activity).toggleUpbtn(ftpWorkingDirectory);
 				// call content load method
 				if(result != null)
 					((FileBrowserBase) activity).loadFileList(result);
@@ -134,7 +138,6 @@ public class Remote {
 	private abstract class ClientTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result>{
 		
 		protected String msg;
-		
 		protected boolean connect() {
 			if (isNetworkAvailable()) {
 				client.setConnectTimeout(500);
@@ -179,6 +182,7 @@ public class Remote {
 			try {
 				if(path != null)
 					client.changeWorkingDirectory(path);
+				ftpWorkingDirectory = client.printWorkingDirectory();
 				FTPFile[] files = client.listFiles();
 				// if remote directory not empty
 				if(files != null){
