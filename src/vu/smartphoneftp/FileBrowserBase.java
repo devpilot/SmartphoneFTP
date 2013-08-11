@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -209,7 +210,38 @@ public class FileBrowserBase extends ListActivity {
 		} else if(ctxAction.equals("Upload")) {
 			destinationDialog(ctxAction);
 		} else if (ctxAction.equals("Rename")) {
-			// TODO show prompt and Rename call
+			final EditText input = new EditText(FileBrowserBase.this);
+			input.setText(seleItem.getName());
+			new AlertDialog.Builder(FileBrowserBase.this)
+					.setTitle("Rename")
+					.setView(input)
+					.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog,	int which) {
+							String t = input.getText().toString();
+							if(!t.equals("")){
+								if(isRemoteMode){
+									// TODO rename remote
+								} else {
+									String p = path;
+									if(!path.equals("/"))
+										p += "/";
+									File from = new File(p + seleItem.getName());
+									File to = new File(p + t);
+									if(from.renameTo(to))
+										// reload list view
+										showLocalfiles(p);
+								}
+							}
+					}
+					})
+					.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							// Canceled
+						}
+					})
+					.show();
 		} else if (ctxAction.equals("Cut")) {
 			// TODO Cut call
 		} else if (ctxAction.equals("Copy")) {
@@ -229,8 +261,6 @@ public class FileBrowserBase extends ListActivity {
 				remote.download(remote.ftpWorkingDirectory+seleItem.getName(), selectedPath + "/" + seleItem.getName());
 			} else if(ctxAction.equals("Upload")) {
 				// TODO Upload call
-			} else if (ctxAction.equals("Rename")) {
-				// TODO show prompt and Rename call
 			} else if (ctxAction.equals("Cut")) {
 				// TODO Cut call
 			} else if (ctxAction.equals("Copy")) {
