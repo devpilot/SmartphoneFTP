@@ -1,9 +1,11 @@
 package vu.smartphoneftp;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,6 +88,7 @@ public class Remote {
 			}
 		}.execute();
 	}
+	
 	public void getParent() {
 		new ClientTask<Void, Void, List<Items>>() {
 
@@ -146,6 +149,17 @@ public class Remote {
 			@Override
 			protected List<Items> doInBackground(Void... params) {
 				download(remote, local);
+				return null;
+			}
+		}.execute();
+	}
+	
+	public void upload(final String remote, final String local) {
+		new ClientTask<Void, Long, List<Items>>() {
+
+			@Override
+			protected List<Items> doInBackground(Void... params) {
+				upload(remote, local);
 				return null;
 			}
 		}.execute();
@@ -282,6 +296,19 @@ public class Remote {
 				output = new FileOutputStream(f);
 				client.retrieveFile(remote, output);
 				output.close();
+			} catch (FileNotFoundException e) {
+				Log.e(TAG, e.getMessage(),e);
+			} catch (IOException e) {
+				Log.e(TAG, e.getMessage(),e);
+			}
+		}
+		
+		protected void upload(String remote, String local) {
+			InputStream input;
+            try {
+				input = new FileInputStream(local);
+				client.storeFile(remote, input);
+				input.close();
 			} catch (FileNotFoundException e) {
 				Log.e(TAG, e.getMessage(),e);
 			} catch (IOException e) {

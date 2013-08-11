@@ -309,7 +309,7 @@ public class FileBrowserBase extends ListActivity {
 			if (ctxAction.equals("Download")) {
 				remote.download(remote.ftpWorkingDirectory + "/" +seleItem.getName(),selectedPath + "/" + seleItem.getName());
 			} else if (ctxAction.equals("Upload")) {
-				// TODO Upload call
+				remote.upload(selectedPath + "/" + seleItem.getName(), path + "/" + seleItem.getName());
 			} else if (ctxAction.equals("Cut")) {
 				// TODO Cut call
 			} else if (ctxAction.equals("Copy")) {
