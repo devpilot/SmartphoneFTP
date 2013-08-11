@@ -1,6 +1,10 @@
 package vu.smartphoneftp;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -136,6 +140,17 @@ public class Remote {
 		}.execute();
 	}
 	
+	public void download(final String remote, final String local) {
+		new ClientTask<Void, Long, List<Items>>() {
+
+			@Override
+			protected List<Items> doInBackground(Void... params) {
+				download(remote, local);
+				return null;
+			}
+		}.execute();
+	}
+	
 	private abstract class ClientTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result>{
 		
 		protected String msg;
@@ -171,7 +186,7 @@ public class Remote {
 						}
 					}
 					msg = "Could not connect to server";
-					Log.e(TAG, e.getMessage());
+					Log.e(TAG, e.getMessage(),e);
 				}
 			} else {
 				msg = "Not connected to internet";
@@ -203,8 +218,29 @@ public class Remote {
 			} catch (IOException e) {
 				Log.e(TAG, e.getMessage());
 				// TODO need to reconnect if connection failed
+				try {
+					Thread.sleep(1000);
+					if(connect())
+					return showRemoteFiles(path);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
 			}
 			return null;
+		}
+		
+		protected void download(String remote, String local) {
+			OutputStream output;
+			try {
+				File f = new File(local);
+				output = new FileOutputStream(f);
+				client.retrieveFile(remote, output);
+				output.close();
+			} catch (FileNotFoundException e) {
+				Log.e(TAG, e.getMessage(),e);
+			} catch (IOException e) {
+				Log.e(TAG, e.getMessage(),e);
+			}
 		}
 		
 		protected void showAlert(String message) {

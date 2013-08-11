@@ -25,6 +25,12 @@ public class SelectDestination_Activity extends FileBrowserBase{
 		if (extras != null) {
 		    ctxAction = extras.getCharSequence("ctxAction");
 		}
+		// For cut/ copy mode is =
+		if(ctxAction.equals("Upload") || ctxAction.equals("Download")){
+			isRemoteMode = !FileBrowser_Activity.shareMode;
+		} else {
+			isRemoteMode = FileBrowser_Activity.shareMode;
+		}
 		
 		setTitle(ctxAction +" to");
 		// set positive button text
@@ -35,7 +41,13 @@ public class SelectDestination_Activity extends FileBrowserBase{
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent();
-				i.putExtra("pastePath", path);
+				if(isRemoteMode){
+					// Upload
+					i.putExtra("pastePath",remote.ftpWorkingDirectory);
+				} else {
+					// Download
+					i.putExtra("pastePath", path);
+				}
 				setResult(RESULT_OK, i);
 				finish();
 			}
@@ -50,12 +62,6 @@ public class SelectDestination_Activity extends FileBrowserBase{
 			}
 		});
 		super.onCreate(savedInstanceState);
-		// For cut/ copy mode is =
-		if(ctxAction.equals("Upload") || ctxAction.equals("Download")){
-			isRemoteMode = !FileBrowser_Activity.shareMode;
-		} else {
-			isRemoteMode = FileBrowser_Activity.shareMode;
-		}
 		if(isRemoteMode){
 			remote.showRemoteFiles(null);
 		} else {

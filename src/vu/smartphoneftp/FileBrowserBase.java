@@ -30,6 +30,8 @@ public class FileBrowserBase extends ListActivity {
 	protected ImageButton btnRoot, btnUp;
 	protected File f;
 	protected final Remote remote = new Remote(this);
+	private Items seleItem;
+	private CharSequence ctxAction;
 
 	@SuppressLint("SdCardPath")
 	@Override
@@ -182,7 +184,7 @@ public class FileBrowserBase extends ListActivity {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
         int position = info.position;
-        Items seleItem = items.get(position);
+        seleItem = items.get(position);
 		if(seleItem.isDirectory()){
 			menu.setHeaderTitle("Folder Action");
 		} else {
@@ -201,12 +203,10 @@ public class FileBrowserBase extends ListActivity {
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		CharSequence ctxAction = item.getTitle();
+		ctxAction = item.getTitle();
 		if(ctxAction.equals("Download")){
-			// TODO Download call
 			destinationDialog(ctxAction);
 		} else if(ctxAction.equals("Upload")) {
-			// TODO Upload call
 			destinationDialog(ctxAction);
 		} else if (ctxAction.equals("Rename")) {
 			// TODO show prompt and Rename call
@@ -225,8 +225,20 @@ public class FileBrowserBase extends ListActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
 			String selectedPath = data.getStringExtra("pastePath");
-			// TODO Call methods to perform cut, copy upload download action
-			Log.d("FTP", selectedPath);
+			if(ctxAction.equals("Download")){
+				remote.download(remote.ftpWorkingDirectory+seleItem.getName(), selectedPath + "/" + seleItem.getName());
+			} else if(ctxAction.equals("Upload")) {
+				// TODO Upload call
+			} else if (ctxAction.equals("Rename")) {
+				// TODO show prompt and Rename call
+			} else if (ctxAction.equals("Cut")) {
+				// TODO Cut call
+			} else if (ctxAction.equals("Copy")) {
+				// TODO Copy call
+			} else {
+				// TODO Delete call
+			}
+			Log.d("FTP", selectedPath + "/" + seleItem.getName());
 		}
 	}
 
