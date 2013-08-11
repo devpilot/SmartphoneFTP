@@ -173,6 +173,30 @@ public class Remote {
 			}
 		}.execute();
 	}
+	
+	public void delete(final String pathname) {
+		new ClientTask<Void, Void, List<Items>>() {
+
+			@Override
+			protected List<Items> doInBackground(Void... params) {
+				try {
+					if(client.deleteFile(pathname))
+						return showRemoteFiles(null);
+				} catch (IOException e) {
+					Log.e(TAG, e.getMessage(),e);
+				}
+				return null;
+			}
+
+			@Override
+			protected void onPostExecute(List<Items> result) {
+				super.onPostExecute(result);
+				if(result != null)
+					((FileBrowserBase) activity).loadFileList(result);
+			}
+		}.execute();
+	}
+	
 	private abstract class ClientTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result>{
 		
 		protected String msg;

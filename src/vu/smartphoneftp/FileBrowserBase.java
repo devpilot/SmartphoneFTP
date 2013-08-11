@@ -38,28 +38,28 @@ public class FileBrowserBase extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		// Get button reference
 		btnUp = (ImageButton) findViewById(R.id.btnUp);
 		btnRoot = (ImageButton) findViewById(R.id.btnRoot);
-		
-//		if(isRemoteMode){
-//			// load remote root directory in listview
-//			remote.showRemoteFiles(null);
-//		} else {
-//			// Check if sdcard exist
-//			String state = Environment.getExternalStorageState();
-//			if (Environment.MEDIA_MOUNTED.equals(state)) {
-//				path = "/sdcard";
-//			}
-//			showLocalfiles(path);
-//		}
+
+		// if(isRemoteMode){
+		// // load remote root directory in listview
+		// remote.showRemoteFiles(null);
+		// } else {
+		// // Check if sdcard exist
+		// String state = Environment.getExternalStorageState();
+		// if (Environment.MEDIA_MOUNTED.equals(state)) {
+		// path = "/sdcard";
+		// }
+		// showLocalfiles(path);
+		// }
 
 		btnUp.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				if(isRemoteMode){
+				if (isRemoteMode) {
 					remote.getParent();
 				} else {
 					String path = f.getParent();
@@ -73,7 +73,7 @@ public class FileBrowserBase extends ListActivity {
 
 			@Override
 			public void onClick(View v) {
-				if(isRemoteMode){
+				if (isRemoteMode) {
 					remote.getRootDir();
 				} else {
 					path = "/";
@@ -82,36 +82,41 @@ public class FileBrowserBase extends ListActivity {
 			}
 		});
 	}
-	
+
 	@Override
 	public void onBackPressed() {
 		String backPath;
-		if(isRemoteMode){
+		if (isRemoteMode) {
 			backPath = remote.ftpWorkingDirectory;
 		} else {
 			backPath = path;
 		}
-		if(backPath.equals("/")){
+		if (backPath.equals("/")) {
 			new AlertDialog.Builder(this)
-			.setTitle("Disconnect?")
-			.setMessage("Would you like to Disconnect and return to connect screen?")
-			.setIcon(android.R.drawable.ic_dialog_alert)
-			.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					// TODO call FTP disconnect method
-					finish();
-				}
-			})
-			.setNegativeButton(android.R.string.cancel,	new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog,	int which) {
-					// Do nothing
-				}
-			}).show();
+					.setTitle("Disconnect?")
+					.setMessage(
+							"Would you like to Disconnect and return to connect screen?")
+					.setIcon(android.R.drawable.ic_dialog_alert)
+					.setPositiveButton(android.R.string.yes,
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO call FTP disconnect method
+									finish();
+								}
+							})
+					.setNegativeButton(android.R.string.cancel,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// Do nothing
+								}
+							}).show();
 		} else {
-			if(isRemoteMode){
+			if (isRemoteMode) {
 				remote.getParent();
 			} else {
 				String path = f.getParent();
@@ -125,45 +130,49 @@ public class FileBrowserBase extends ListActivity {
 		super.onListItemClick(l, v, position, id);
 		Items currentFile = items.get(position);
 		if (currentFile.isDirectory()) {
-			if(isRemoteMode){
+			if (isRemoteMode) {
 				remote.showRemoteFiles(currentFile.getName());
 			} else {
 				String path = this.path;
-				if(!this.path.equals("/"))
+				if (!this.path.equals("/"))
 					path += "/";
 				path += currentFile.getName();
 				showLocalfiles(path);
 			}
 		}
 	}
-	
+
 	public void showLocalfiles(String path) {
 		f = new File(path);
-		if(f.canRead()){
+		if (f.canRead()) {
 			this.path = path;
 			toggleUpbtn(path);
 			File[] files = f.listFiles();
 			items = new ArrayList<Items>();
 			for (File file : files) {
-				if(file.isDirectory()){
+				if (file.isDirectory()) {
 					items.add(new Items(file.getName(), R.drawable.ic_folder));
 				} else {
-					items.add(new Items(file.getName(), file.length(), R.drawable.ic_file));
+					items.add(new Items(file.getName(), file.length(),
+							R.drawable.ic_file));
 				}
 			}
 			// display files in listview
 			loadFileList(items);
 		} else {
-			Toast.makeText(this, "Can't read this directory", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Can't read this directory",
+					Toast.LENGTH_SHORT).show();
 		}
 	}
-	
+
 	/**
 	 * Disable up button for file root
-	 * @param path String
+	 * 
+	 * @param path
+	 *            String
 	 */
 	public void toggleUpbtn(String path) {
-		if(path.equals("/")){
+		if (path.equals("/")) {
 			btnUp.setEnabled(false);
 			btnRoot.setEnabled(false);
 		} else {
@@ -171,8 +180,8 @@ public class FileBrowserBase extends ListActivity {
 			btnRoot.setEnabled(true);
 		}
 	}
-	
-	public void loadFileList(List<Items> items){
+
+	public void loadFileList(List<Items> items) {
 		this.items = items;
 		FileAdepter adapter = new FileAdepter(this, items);
 		// Assign adapter to ListView
@@ -184,13 +193,13 @@ public class FileBrowserBase extends ListActivity {
 			ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-        int position = info.position;
-        seleItem = items.get(position);
-		if(seleItem.isDirectory()){
+		int position = info.position;
+		seleItem = items.get(position);
+		if (seleItem.isDirectory()) {
 			menu.setHeaderTitle("Folder Action");
 		} else {
 			menu.setHeaderTitle("File Action");
-			if(isRemoteMode){
+			if (isRemoteMode) {
 				menu.add("Download");
 			} else {
 				menu.add("Upload");
@@ -205,9 +214,9 @@ public class FileBrowserBase extends ListActivity {
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		ctxAction = item.getTitle();
-		if(ctxAction.equals("Download")){
+		if (ctxAction.equals("Download")) {
 			destinationDialog(ctxAction);
-		} else if(ctxAction.equals("Upload")) {
+		} else if (ctxAction.equals("Upload")) {
 			destinationDialog(ctxAction);
 		} else if (ctxAction.equals("Rename")) {
 			final EditText input = new EditText(FileBrowserBase.this);
@@ -215,39 +224,79 @@ public class FileBrowserBase extends ListActivity {
 			new AlertDialog.Builder(FileBrowserBase.this)
 					.setTitle("Rename")
 					.setView(input)
-					.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog,	int which) {
-							String t = input.getText().toString();
-							if(!t.equals("")){
-								if(isRemoteMode){
-									remote.rename(seleItem.getName(), t);
-								} else {
-									String p = path;
-									if(!path.equals("/"))
-										p += "/";
-									File from = new File(p + seleItem.getName());
-									File to = new File(p + t);
-									if(from.renameTo(to))
-										// reload list view
-										showLocalfiles(p);
+					.setPositiveButton(android.R.string.ok,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									String t = input.getText().toString();
+									if (!t.equals("")) {
+										if (isRemoteMode) {
+											remote.rename(seleItem.getName(), t);
+										} else {
+											String p = path;
+											if (!path.equals("/"))
+												p += "/";
+											File from = new File(p
+													+ seleItem.getName());
+											File to = new File(p + t);
+											if (from.renameTo(to))
+												// reload list view
+												showLocalfiles(p);
+										}
+									}
 								}
-							}
-					}
-					})
-					.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							// Canceled
-						}
-					})
-					.show();
+							})
+					.setNegativeButton(android.R.string.cancel,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// Canceled
+								}
+							}).show();
 		} else if (ctxAction.equals("Cut")) {
 			// TODO Cut call
 		} else if (ctxAction.equals("Copy")) {
 			// TODO Copy call
 		} else {
-			// TODO Delete call
+			new AlertDialog.Builder(FileBrowserBase.this)
+					.setTitle(
+							"Do you want to delete " + seleItem.getName()
+									+ " ?")
+					.setIcon(android.R.drawable.ic_dialog_alert)
+					.setPositiveButton(android.R.string.yes,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									if (isRemoteMode) {
+										remote.delete(seleItem.getName());
+										// remote.showRemoteFiles(path);
+									} else {
+										String p = path;
+										if (!path.equals("/"))
+											p += "/";
+										File file = new File(p + "/"
+												+ seleItem.getName());
+										file.delete();
+										// show delete success message
+										Toast.makeText(getApplicationContext(),
+												"File Deleted!",
+												Toast.LENGTH_SHORT).show();
+
+										showLocalfiles(path);
+									}
+								}
+							})
+					.setNegativeButton("Cancel",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// Canceled
+								}
+							}).show();
 		}
 		return super.onContextItemSelected(item);
 	}
