@@ -257,16 +257,14 @@ public class FileBrowserBase extends ListActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
 			String selectedPath = data.getStringExtra("pastePath");
-			if(ctxAction.equals("Download")){
-				remote.download(remote.ftpWorkingDirectory+seleItem.getName(), selectedPath + "/" + seleItem.getName());
-			} else if(ctxAction.equals("Upload")) {
+			if (ctxAction.equals("Download")) {
+				remote.download(remote.ftpWorkingDirectory + "/" +seleItem.getName(),selectedPath + "/" + seleItem.getName());
+			} else if (ctxAction.equals("Upload")) {
 				// TODO Upload call
 			} else if (ctxAction.equals("Cut")) {
 				// TODO Cut call
 			} else if (ctxAction.equals("Copy")) {
 				// TODO Copy call
-			} else {
-				// TODO Delete call
 			}
 			Log.d("FTP", selectedPath + "/" + seleItem.getName());
 		}
