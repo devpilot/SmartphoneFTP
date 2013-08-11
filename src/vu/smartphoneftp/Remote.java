@@ -211,6 +211,17 @@ public class Remote {
 		}.execute();
 	}
 	
+	public void disconnect() {
+		new ClientTask<Void, Void, Void>() {
+
+			@Override
+			protected Void doInBackground(Void... params) {
+				disconnect();
+				return null;
+			}
+		}.execute();
+	}
+	
 	private abstract class ClientTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result>{
 		
 		protected String msg;
@@ -313,6 +324,21 @@ public class Remote {
 				Log.e(TAG, e.getMessage(),e);
 			} catch (IOException e) {
 				Log.e(TAG, e.getMessage(),e);
+			}
+		}
+		
+		protected void disconnect() {
+			try {
+				client.logout();
+			} catch (IOException e) {
+				Log.e(TAG, e.getMessage(), e);
+				if (client.isConnected()) {
+					try {
+						client.disconnect();
+					} catch (IOException f) {
+						// do nothing
+					}
+				}
 			}
 		}
 		

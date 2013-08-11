@@ -103,7 +103,7 @@ public class FileBrowserBase extends ListActivity {
 								@Override
 								public void onClick(DialogInterface dialog,
 										int which) {
-									// TODO call FTP disconnect method
+									remote.disconnect();
 									finish();
 								}
 							})
