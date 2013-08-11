@@ -221,7 +221,7 @@ public class FileBrowserBase extends ListActivity {
 							String t = input.getText().toString();
 							if(!t.equals("")){
 								if(isRemoteMode){
-									// TODO rename remote
+									remote.rename(seleItem.getName(), t);
 								} else {
 									String p = path;
 									if(!path.equals("/"))
