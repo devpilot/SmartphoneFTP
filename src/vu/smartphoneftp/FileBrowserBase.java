@@ -92,29 +92,7 @@ public class FileBrowserBase extends ListActivity {
 			backPath = path;
 		}
 		if (backPath.equals("/")) {
-			new AlertDialog.Builder(this)
-					.setTitle("Disconnect?")
-					.setMessage(
-							"Would you like to Disconnect and return to connect screen?")
-					.setIcon(android.R.drawable.ic_dialog_alert)
-					.setPositiveButton(android.R.string.yes,
-							new DialogInterface.OnClickListener() {
-
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									remote.disconnect();
-									finish();
-								}
-							})
-					.setNegativeButton(android.R.string.cancel,
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									// Do nothing
-								}
-							}).show();
+			disconnectDialog();
 		} else {
 			if (isRemoteMode) {
 				remote.getParent();
@@ -329,5 +307,39 @@ public class FileBrowserBase extends ListActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.file_browser, menu);
 		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		if(item.getItemId() == R.id.action_disconnect)
+			disconnectDialog();
+		return super.onOptionsItemSelected(item);
+	}
+	
+	private void disconnectDialog() {
+		new AlertDialog.Builder(this)
+		.setTitle("Disconnect?")
+		.setMessage(
+				"Would you like to Disconnect and return to connect screen?")
+		.setIcon(android.R.drawable.ic_dialog_alert)
+		.setPositiveButton(android.R.string.yes,
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog,
+							int which) {
+						remote.disconnect();
+						finish();
+					}
+				})
+		.setNegativeButton(android.R.string.cancel,
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog,
+							int which) {
+						// Do nothing
+					}
+				}).show();
 	}
 }
