@@ -327,7 +327,7 @@ public class FileBrowserBase extends ListActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.file_browser_, menu);
+		getMenuInflater().inflate(R.menu.file_browser, menu);
 		return true;
 	}
 }
