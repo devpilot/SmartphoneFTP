@@ -153,7 +153,7 @@ public class Remote {
 			final ProgressDialog progressBar = new ProgressDialog(activity);
 			@Override
 			protected void onPreExecute() {				
-		        progressBar.setCancelable(true);
+		        progressBar.setCancelable(false);
 		        progressBar.setMessage("Downloading File...");
 		        progressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		        progressBar.setProgress(0);
@@ -174,6 +174,7 @@ public class Remote {
 
 			@Override
 			protected void onProgressUpdate(Long... values) {
+				if(fileSize == 0) fileSize = 1;
 				progressBar.setProgress((int) (values[0] * 100 / fileSize));
 				Log.i(TAG, String.valueOf(values[0]));
 			}
@@ -333,7 +334,7 @@ public class Remote {
 			OutputStream output;
 			try {
 				File f = new File(local);
-				fileSize = f.length();
+				fileSize = f.length() /1000000;
 				output = new FileOutputStream(f);
 				client.retrieveFile(remote, output);
 				output.close();
@@ -401,22 +402,18 @@ public class Remote {
 
 		private CopyStreamListener createListener(){
 		        return new CopyStreamListener(){
-//		            private long megsTotal = 0;
-		//            @Override
-		            public void bytesTransferred(CopyStreamEvent event) {
-		            	ct.publishProgress(event.getTotalBytesTransferred());
-//		                bytesTransferred(event.getTotalBytesTransferred(), event.getBytesTransferred(), event.getStreamSize());
-		            }
+		            private long megsTotal = 0;
+		            @Override
+		            public void bytesTransferred(CopyStreamEvent event) {}
 		
-		//            @Override
+		            @Override
 		            public void bytesTransferred(long totalBytesTransferred,
 		                    int bytesTransferred, long streamSize) {
-//		                long megs = totalBytesTransferred / 1000000;
-//		                ct.publishProgress(totalBytesTransferred);
-//		                for (long l = megsTotal; l < megs; l++) {
-//		                    System.err.print("#");
-//		                }
-//		                megsTotal = megs;
+		                long megs = totalBytesTransferred / 1000000;
+		                for (long l = megsTotal; l < megs; l++) {
+		                ct.publishProgress(megs);
+		                }
+		                megsTotal = megs;
 		            }
 		        };
 		    }
