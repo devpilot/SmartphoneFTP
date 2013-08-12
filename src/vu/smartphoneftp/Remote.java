@@ -13,9 +13,12 @@ import java.util.List;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
+import org.apache.commons.net.io.CopyStreamEvent;
+import org.apache.commons.net.io.CopyStreamListener;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -30,6 +33,8 @@ public class Remote {
 	private Activity activity;
 	private static Server server;	
 	public String ftpWorkingDirectory;
+	private static long fileSize;
+	private static ClientTask<Void, Long, Void> ct;
 
 	/**
 	 * 
@@ -144,12 +149,33 @@ public class Remote {
 	}
 	
 	public void download(final String remote, final String local) {
-		new ClientTask<Void, Long, List<Items>>() {
+		new ClientTask<Void, Long, Void>() {
+			final ProgressDialog progressBar = new ProgressDialog(activity);
+			@Override
+			protected void onPreExecute() {				
+		        progressBar.setCancelable(true);
+		        progressBar.setMessage("Downloading File...");
+		        progressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		        progressBar.setProgress(0);
+		        progressBar.setMax(100);
+		        progressBar.show();
+			}
 
 			@Override
-			protected List<Items> doInBackground(Void... params) {
-				download(remote, local);
+			protected void onPostExecute(Void result) {
+				progressBar.dismiss();
+			}
+
+			@Override
+			protected Void doInBackground(Void... params) {
+				download(remote, local,this);
 				return null;
+			}
+
+			@Override
+			protected void onProgressUpdate(Long... values) {
+				progressBar.setProgress((int) (values[0] * 100 / fileSize));
+				Log.i(TAG, String.valueOf(values[0]));
 			}
 		}.execute();
 	}
@@ -246,6 +272,7 @@ public class Remote {
 					// should be connected here
 					// enter passive mode
 					client.enterLocalPassiveMode();
+					client.setCopyStreamListener(createListener());
 					Log.d(TAG, client.getReplyString());
 					return true;
 				} catch (IOException e) {
@@ -300,10 +327,13 @@ public class Remote {
 			return null;
 		}
 		
-		protected void download(String remote, String local) {
+		protected void download(String remote, String local, ClientTask<Void,Long,Void> clientTask) {
+			ct = clientTask;
+			
 			OutputStream output;
 			try {
 				File f = new File(local);
+				fileSize = f.length();
 				output = new FileOutputStream(f);
 				client.retrieveFile(remote, output);
 				output.close();
@@ -349,6 +379,7 @@ public class Remote {
 			ad.setTitle("Error");
 			ad.setMessage(message);
 			ad.show();
+//			ct.publishProgress(megs);
 		}
 
 		/**
@@ -367,5 +398,27 @@ public class Remote {
 			}
 			return false;
 		}
-	};
+
+		private CopyStreamListener createListener(){
+		        return new CopyStreamListener(){
+//		            private long megsTotal = 0;
+		//            @Override
+		            public void bytesTransferred(CopyStreamEvent event) {
+		            	ct.publishProgress(event.getTotalBytesTransferred());
+//		                bytesTransferred(event.getTotalBytesTransferred(), event.getBytesTransferred(), event.getStreamSize());
+		            }
+		
+		//            @Override
+		            public void bytesTransferred(long totalBytesTransferred,
+		                    int bytesTransferred, long streamSize) {
+//		                long megs = totalBytesTransferred / 1000000;
+//		                ct.publishProgress(totalBytesTransferred);
+//		                for (long l = megsTotal; l < megs; l++) {
+//		                    System.err.print("#");
+//		                }
+//		                megsTotal = megs;
+		            }
+		        };
+		    }
+	}
 }
