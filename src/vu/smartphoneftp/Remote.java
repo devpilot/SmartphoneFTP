@@ -182,12 +182,35 @@ public class Remote {
 	}
 	
 	public void upload(final String remote, final String local) {
-		new ClientTask<Void, Long, List<Items>>() {
+		new ClientTask<Void, Long, Void>() {
+			final ProgressDialog progressBar = new ProgressDialog(activity);
+			@Override
+			protected Void doInBackground(Void... params) {
+				upload(remote, local, this);
+				return null;
+			}
 
 			@Override
-			protected List<Items> doInBackground(Void... params) {
-				upload(remote, local);
-				return null;
+			protected void onPreExecute() {
+				progressBar.setCancelable(false);
+		        progressBar.setMessage("Uploading File...");
+		        progressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		        progressBar.setProgress(0);
+		        progressBar.setMax(100);
+		        progressBar.show();
+				
+			}
+
+			@Override
+			protected void onPostExecute(Void result) {
+				progressBar.dismiss();
+			}
+
+			@Override
+			protected void onProgressUpdate(Long... values) {
+				if(fileSize == 0) fileSize = 1;
+				progressBar.setProgress((int) (values[0] * 100 / fileSize));
+				Log.i(TAG, String.valueOf(values[0]));
 			}
 		}.execute();
 	}
@@ -329,8 +352,7 @@ public class Remote {
 		}
 		
 		protected void download(String remote, String local, ClientTask<Void,Long,Void> clientTask) {
-			ct = clientTask;
-			
+			ct = clientTask;			
 			OutputStream output;
 			try {
 				File f = new File(local);
@@ -345,9 +367,12 @@ public class Remote {
 			}
 		}
 		
-		protected void upload(String remote, String local) {
+		protected void upload(String remote, String local, ClientTask<Void, Long, Void> clientTask) {
+			ct = clientTask;
 			InputStream input;
             try {
+            	File f = new File(local);
+				fileSize = f.length() /1000000;
 				input = new FileInputStream(local);
 				client.storeFile(remote, input);
 				input.close();
