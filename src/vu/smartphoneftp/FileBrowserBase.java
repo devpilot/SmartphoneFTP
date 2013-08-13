@@ -33,6 +33,7 @@ public class FileBrowserBase extends ListActivity {
 	protected final Remote remote = new Remote(this);
 	private Items seleItem;
 	private CharSequence ctxAction;
+	private String tempPath;
 
 	@SuppressLint("SdCardPath")
 	@Override
@@ -234,7 +235,8 @@ public class FileBrowserBase extends ListActivity {
 								}
 							}).show();
 		} else if (ctxAction.equals("Cut")) {
-			// TODO Cut call
+			tempPath = remote.ftpWorkingDirectory;
+			destinationDialog(ctxAction);
 		} else if (ctxAction.equals("Copy")) {
 			// TODO Copy call
 		} else {
@@ -289,7 +291,7 @@ public class FileBrowserBase extends ListActivity {
 			} else if (ctxAction.equals("Upload")) {
 				remote.upload(selectedPath + "/" + seleItem.getName(), path + "/" + seleItem.getName());
 			} else if (ctxAction.equals("Cut")) {
-				// TODO Cut call
+				remote.move(tempPath + "/" + seleItem.getName(), selectedPath + "/" + seleItem.getName());
 			} else if (ctxAction.equals("Copy")) {
 				// TODO Copy call
 			}
